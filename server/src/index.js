@@ -9,7 +9,7 @@ const port = 4000;
 app.use(cors());
 app.get("/", (req, res) => {
   // uploadWithoutAuthenticationSignedUrlStrategy().catch(console.error);
-  res.send("Hello World!");
+  res.send("SERVER!");
 });
 
 app.get("/get-signed-url", (req, res) => {
