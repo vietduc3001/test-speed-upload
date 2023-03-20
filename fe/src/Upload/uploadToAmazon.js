@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import { convertTime, getFileSize } from "../helper";
+import { logMessage } from "../helper";
 
 const CONFIG = {
   accessKey: "AKIA2QDG3BHNUPAWTT2A",
@@ -146,17 +146,7 @@ function completeMultipartUpload(s3, doneParams, fileUploadInformation) {
       console.log("An error occurred while competing the multipart upload");
       console.log(err);
     } else {
-      const endTime = new Date(); // End time of the upload
-
-      const finishedTime = convertTime(
-        fileUploadInformation.startTime,
-        endTime,
-      );
-      const fileSize = getFileSize(fileUploadInformation.file.size);
-      const message = `AMAZON : Hoàn thành trong ${finishedTime} | Kích thước: ${fileSize}`;
-
-      console.log(message);
-      alert(message);
+      logMessage(fileUploadInformation);
     }
   });
 }

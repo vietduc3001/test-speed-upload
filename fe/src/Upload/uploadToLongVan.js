@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import { getFileSize, convertTime } from "../helper";
+import { logMessage } from "../helper";
 
 const CONFIG = {
   accessKey: "EUMTEDYNRU6NEV7CQ1P0",
@@ -51,13 +51,6 @@ export const uploadToLongVan = (
       alert("File upload lỗi", err);
       return;
     }
-    const endTime = new Date(); // End time of the upload
-
-    const finishedTime = convertTime(startTime, endTime);
-    const fileSize = getFileSize(fileUploadInformation.file.size);
-    const message = `LONGVAN: Hoàn thành trong ${finishedTime} | Kích thước: ${fileSize}`;
-
-    console.log(message);
-    alert(message);
+    logMessage(fileUploadInformation);
   });
 };

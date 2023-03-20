@@ -1,11 +1,11 @@
 import { BlobServiceClient } from "@azure/storage-blob";
-import { getFileSize, convertTime } from "../helper";
+import { logMessage } from "../helper";
 
 export const uploadToAzure = async (fileUploadInformation, setProgress) => {
   const { file } = fileUploadInformation;
   const containerName = "uploaded";
   const connectionString =
-    "BlobEndpoint=https://antmusicdemo.blob.core.windows.net/;QueueEndpoint=https://antmusicdemo.queue.core.windows.net/;FileEndpoint=https://antmusicdemo.file.core.windows.net/;TableEndpoint=https://antmusicdemo.table.core.windows.net/;SharedAccessSignature=sv=2021-12-02&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2023-03-16T11:29:14Z&st=2023-03-16T03:29:14Z&spr=https&sig=o8MVlJ%2F45IHkzLmqR6WjuiMXJNNm%2FW6XZQ3bFEWURNQ%3D";
+    "BlobEndpoint=https://antmusicdemo.blob.core.windows.net/;QueueEndpoint=https://antmusicdemo.queue.core.windows.net/;FileEndpoint=https://antmusicdemo.file.core.windows.net/;TableEndpoint=https://antmusicdemo.table.core.windows.net/;SharedAccessSignature=sv=2021-12-02&ss=bfqt&srt=co&sp=rwdlacupiytfx&se=2023-03-23T09:21:14Z&st=2023-03-17T01:21:14Z&spr=https&sig=cOvXIH4ohYRspksoYTzCSe6KhoUDaVhkJsf5TZVvLu4%3D";
   const blobServiceClient =
     BlobServiceClient.fromConnectionString(connectionString);
   const containerClient = blobServiceClient.getContainerClient(containerName);
@@ -22,16 +22,7 @@ export const uploadToAzure = async (fileUploadInformation, setProgress) => {
         setProgress(newProgress);
       },
     });
-    const endTime = new Date(); // End time of the upload
-
-    const finishedTime = convertTime(fileUploadInformation.startTime, endTime);
-    const fileSize = getFileSize(fileUploadInformation.file.size);
-    const message = `AZURE  : Hoàn thành trong ${finishedTime} | Kích thước: ${fileSize}`;
-
-    console.log(message);
-    alert(message);
-
-    return endTime;
+    logMessage(fileUploadInformation);
   } catch (error) {
     console.error("Failed to upload file", error);
   }

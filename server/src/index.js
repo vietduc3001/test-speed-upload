@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const { generateSignedUrl } = require("./googleCloud");
+const { generateSignedUrl, generateDownloadUrl } = require("./googleCloud");
 const { Storage } = require("@google-cloud/storage");
 
 const app = express();
@@ -14,13 +14,22 @@ app.get("/", (req, res) => {
 
 app.get("/get-signed-url", (req, res) => {
   const { fileName, contentType } = req.query;
-  // Generate a signed URL for uploading the file to Google Cloud Storage
 
-  let url = "abc";
+  // Generate a signed URL for uploading the file to Google Cloud Storage
   generateSignedUrl(fileName, contentType)
     .then((result) => {
       console.log("file: index.js:33 ~ .then ~ result:", result);
       res.send(result);
+    })
+    .catch((error) => console.log("error: ", error));
+});
+
+app.get("/download", (req, res) => {
+  const { fileName } = req.query;
+  generateDownloadUrl(fileName)
+    .then((result) => {
+      console.log("file: index.js:30 ~ .then ~ result:", result);
+      res.send({ ...result, fileName });
     })
     .catch((error) => console.log("error: ", error));
 });

@@ -15,3 +15,15 @@ export function convertTime(startTime, endTime) {
   const seconds = dayjs(time).format("ss");
   return `${minutes} phút ${seconds} giây`;
 }
+
+export function logMessage(fileUploadInformation) {
+  const { startTime, file, distributor } = fileUploadInformation;
+  const endTime = new Date(); // End time of the upload
+
+  const finishedTime = convertTime(startTime, endTime);
+  const fileSize = getFileSize(file.size);
+  const message = `${distributor}: Hoàn thành trong ${finishedTime} | Kích thước: ${fileSize}`;
+
+  console.log(message);
+  alert(message);
+}

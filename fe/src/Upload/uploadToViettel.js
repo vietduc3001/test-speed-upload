@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import { convertTime, getFileSize } from "../helper";
+import { logMessage } from "../helper";
 
 const CONFIG = {
   accessKey: "63048af01deccf617b4d",
@@ -7,6 +7,7 @@ const CONFIG = {
   endpoint: "s3-north.viettelidc.com.vn",
   bucket: "ant-music-trial-viettel",
 };
+const EXPIRES_TIME = 60;
 
 let { accessKey, secretKey, endpoint, bucket } = CONFIG;
 
@@ -21,6 +22,40 @@ let s3 = new AWS.S3({
     timeout: 1000 * 60000,
   },
 });
+
+export const downloadFile = (key) => {
+  console.log("file: uploadToViettel.js:28 ~ downloadFile ~ key:", key);
+
+  // s3.getObject({
+  //   Bucket: 'ant-music-bucket-test',
+  //   Key: 'beat mashup 3 bai.mp3',
+  // })
+  //   .promise()
+  //   .then((data) => {
+  //     // File contents are in data.Body
+  //     console.log(data);
+  //     // saveAs(data.Body, 'YOUR_FILE_NAME');
+  //     const file = new Blob([data.Body], { type: 'audio/mpeg' });
+  //     saveAs(file, 'YOUR_FILE_NAME');
+  //   })
+  //   .catch((error) => {
+  //     console.error(error);
+  //   });
+  const params = {
+    Bucket: bucket,
+    Key: key,
+    Expires: EXPIRES_TIME,
+  };
+  s3.getSignedUrl("getObject", params, function (err, url) {
+    if (err) {
+      console.log("err", err);
+    } else {
+      // Use the URL to download the file
+      console.log("url", url);
+      window.open(url);
+    }
+  });
+};
 
 // ========================== UPLOAD MULTI PART ===========================
 const PART_SIZE = 5 * 1024 * 1024;
@@ -145,17 +180,7 @@ function completeMultipartUpload(s3, doneParams, fileUploadInformation) {
       console.log("An error occurred while competing the multipart upload");
       console.log(err);
     } else {
-      const endTime = new Date(); // End time of the upload
-
-      const finishedTime = convertTime(
-        fileUploadInformation.startTime,
-        endTime,
-      );
-      const fileSize = getFileSize(fileUploadInformation.file.size);
-      const message = `VIETTEL: Hoàn thành trong ${finishedTime} | Kích thước: ${fileSize}`;
-
-      console.log(message);
-      alert(message);
+      logMessage(fileUploadInformation);
     }
   });
 }
